@@ -76,7 +76,7 @@ extends:
   template: stages\dotnet-package.yml@templates
   parameters:
     useNugetConfig: true
-    nugetConfigPath: VH.Core.Mapping
+    nugetConfigPath: 
     coreProjectPath: VH.Core.Mapping
     nugetProjectPath: VH.Core.Mapping
     PackageNuget: ${{ parameters.PackageNuget }}
