@@ -86,6 +86,8 @@ extends:
       baseAgent: windows-latest
       useNugetConfig: false
       nugetConfigPath: VH.Core.Mapping
+      secrets_KeyVault: $(pr_Secret_KeyVault)
+      secrets_Subscription: $(pr_Secret_Subscription)
       unitTestProjectPath: VH.Core.Mapping.UnitTests
       RunUnitTests: ${{ parameters.RunUnitTests }}
       RunIntegrationTests: ${{ parameters.RunIntegTests }}
