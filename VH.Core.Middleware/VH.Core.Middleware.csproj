@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+	  <TargetFramework>netcoreapp3.1</TargetFramework>
+	  <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+	  <Title>VH Core Middleware</Title>
+	  <Authors>HMCTS VH</Authors>
+	  <Description>.NET VH Core Middleware</Description>
+	  <PackageProjectUrl>https://github.com/hmcts/vh-common</PackageProjectUrl>
+	  <License>https://github.com/hmcts/vh-common/blob/master/LICENSE</License>
+	  <RepositoryUrl>https://github.com/hmcts/vh-commoni</RepositoryUrl>
+	  <TargetsForTfmSpecificBuildOutput>$(TargetsForTfmSpecificBuildOutput);CopyProjectReferencesToPackage</TargetsForTfmSpecificBuildOutput>
+  </PropertyGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Castle.Core" Version="4.4.0" />
+		<PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.12.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Http.Connections.Common" Version="3.1.10" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
+		<PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.NewtonsoftJson" Version="3.1.10" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices" Version="3.1.10" />
+		<PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="3.1.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyModel" Version="3.1.6" />
+		<PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.12.0" />
+		<PackageReference Include="Scrutor" Version="3.3.0" />
+		<PackageReference Include="SonarAnalyzer.CSharp" Version="8.2.0.14119" />
+	</ItemGroup>
+
+	<Target DependsOnTargets="ResolveReferences" Name="CopyProjectReferencesToPackage">
+		<ItemGroup>
+			<BuildOutputInPackage Include="@(ReferenceCopyLocalPaths-&gt;WithMetadataValue('ReferenceSourceTarget', 'ProjectReference'))" />
+		</ItemGroup>
+	</Target>
+</Project>
