@@ -3,26 +3,28 @@ using System.IO;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
 
-namespace UserApi.AksKeyVaultFileProvider
+namespace VH.Core.Configuration.AKSKeyVaultFileProvider
 {
+    /// <summary>
+    /// Based on the .NET Physical File Provider.
+    /// https://docs.microsoft.com/en-us/dotnet/api/microsoft.extensions.fileproviders.physicalfileprovider?view=dotnet-plat-ext-5.0
+    /// </summary>
     public class AksKeyVaultSecretFileProvider : IFileProvider
     {
-        public string Root { get; }
+        private readonly string rootPath;
 
         private static readonly char[] _pathSeparators = new[]
-            {Path.DirectorySeparatorChar, Path.AltDirectorySeparatorChar};
-
-        public AksKeyVaultSecretFileProvider(string root)
         {
-            if (!Path.IsPathRooted(root))
-            {
-                throw new ArgumentException("The path must be absolute.", nameof(root));
-            }
+            Path.DirectorySeparatorChar,
+            Path.AltDirectorySeparatorChar
+        };
 
-            Root = Path.GetFullPath(root);
-            if (!Directory.Exists(Root))
+        public AksKeyVaultSecretFileProvider(string _root)
+        {
+            rootPath = Path.GetFullPath(_root);
+            if (!Directory.Exists(rootPath))
             {
-                throw new DirectoryNotFoundException(Root);
+                throw new DirectoryNotFoundException(rootPath);
             }
         }
 
@@ -31,7 +33,7 @@ namespace UserApi.AksKeyVaultFileProvider
             string fullPath;
             try
             {
-                fullPath = Path.GetFullPath(Path.Combine(Root, path));
+                fullPath = Path.GetFullPath(Path.Combine(rootPath, path));
             }
             catch
             {
@@ -48,7 +50,7 @@ namespace UserApi.AksKeyVaultFileProvider
 
         private bool IsUnderneathRoot(string fullPath)
         {
-            return fullPath.StartsWith(Root, StringComparison.OrdinalIgnoreCase);
+            return fullPath.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase);
         }
 
         public IFileInfo GetFileInfo(string subpath)
@@ -71,7 +73,6 @@ namespace UserApi.AksKeyVaultFileProvider
             }
 
             var fileInfo = new FileInfo(fullPath);
-
             return new AksKeyVaultSecretFileInfo(fileInfo);
         }
 
@@ -100,11 +101,12 @@ namespace UserApi.AksKeyVaultFileProvider
             }
             catch (DirectoryNotFoundException)
             {
+                return NotFoundDirectoryContents.Singleton;
             }
             catch (IOException)
             {
+                return NotFoundDirectoryContents.Singleton;
             }
-            return NotFoundDirectoryContents.Singleton;
         }
 
         public IChangeToken Watch(string filter) => NullChangeToken.Singleton;

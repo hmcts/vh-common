@@ -5,7 +5,7 @@ using System.IO;
 using System.Linq;
 using Microsoft.Extensions.FileProviders;
 
-namespace UserApi.AksKeyVaultFileProvider
+namespace VH.Core.Configuration.AKSKeyVaultFileProvider
 {
     public class AksKeyVaultSecretDirectoryContents : IDirectoryContents
     {
