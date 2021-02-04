@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.IO;
 using Microsoft.Extensions.FileProviders;
 using Microsoft.Extensions.Primitives;
@@ -11,20 +11,20 @@ namespace VH.Core.Configuration.AKSKeyVaultFileProvider
     /// </summary>
     public class AksKeyVaultSecretFileProvider : IFileProvider
     {
-        private readonly string rootPath;
+        private readonly string _rootPath;
 
-        private static readonly char[] _pathSeparators = new[]
+        public static readonly char[] PathSeparators =
         {
             Path.DirectorySeparatorChar,
             Path.AltDirectorySeparatorChar
         };
 
-        public AksKeyVaultSecretFileProvider(string _root)
+        public AksKeyVaultSecretFileProvider(string rootPath)
         {
-            rootPath = Path.GetFullPath(_root);
-            if (!Directory.Exists(rootPath))
+            _rootPath = Path.GetFullPath(rootPath);
+            if (!Directory.Exists(_rootPath))
             {
-                throw new DirectoryNotFoundException(rootPath);
+                throw new DirectoryNotFoundException(_rootPath);
             }
         }
 
@@ -33,7 +33,7 @@ namespace VH.Core.Configuration.AKSKeyVaultFileProvider
             string fullPath;
             try
             {
-                fullPath = Path.GetFullPath(Path.Combine(rootPath, path));
+                fullPath = Path.GetFullPath(Path.Combine(_rootPath, path));
             }
             catch
             {
@@ -50,17 +50,17 @@ namespace VH.Core.Configuration.AKSKeyVaultFileProvider
 
         private bool IsUnderneathRoot(string fullPath)
         {
-            return fullPath.StartsWith(rootPath, StringComparison.OrdinalIgnoreCase);
+            return fullPath.StartsWith(_rootPath, StringComparison.OrdinalIgnoreCase);
         }
 
         public IFileInfo GetFileInfo(string subpath)
         {
-            if (string.IsNullOrEmpty(subpath))
+            if (string.IsNullOrWhiteSpace(subpath))
             {
                 return new NotFoundFileInfo(subpath);
             }
 
-            subpath = subpath.TrimStart(_pathSeparators);
+            subpath = subpath.TrimStart(PathSeparators);
             if (Path.IsPathRooted(subpath))
             {
                 return new NotFoundFileInfo(subpath);
@@ -80,12 +80,12 @@ namespace VH.Core.Configuration.AKSKeyVaultFileProvider
         {
             try
             {
-                if (subpath == null)
+                if (string.IsNullOrWhiteSpace(subpath))
                 {
                     return NotFoundDirectoryContents.Singleton;
                 }
 
-                subpath = subpath.TrimStart(_pathSeparators);
+                subpath = subpath.TrimStart(PathSeparators);
                 if (Path.IsPathRooted(subpath))
                 {
                     return NotFoundDirectoryContents.Singleton;
@@ -109,6 +109,9 @@ namespace VH.Core.Configuration.AKSKeyVaultFileProvider
             }
         }
 
-        public IChangeToken Watch(string filter) => NullChangeToken.Singleton;
+        public IChangeToken Watch(string filter)
+        {
+            return NullChangeToken.Singleton;
+        }
     }
 }
